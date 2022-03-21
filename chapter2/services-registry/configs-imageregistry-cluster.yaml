@@ -21,4 +21,5 @@ spec:
     managementState: Unmanaged
     pvc:
       claim: registry-claim
+    s3: null
   unsupportedConfigOverrides: null
