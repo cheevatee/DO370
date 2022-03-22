@@ -1,0 +1,63 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: image-tool
+  name: image-tool
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: image-tool
+  strategy: {}
+  template:
+    metadata:
+      labels:
+        app: image-tool
+    spec:
+      containers:
+      - name: image-tool
+        image: quay.io/redhattraining/image-tool:latest
+        ports:
+        - containerPort: 5000
+        resources: {}
+#        volumeMounts:
+#        - name: image-tool-storage
+#          mountPath: "/var/storage"
+#      volumes:
+#      - name: image-tool-storage
+#        persistentVolumeClaim:
+#          claimName: CHANGE_ME
+---
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: image-tool
+  name: image-tool
+spec:
+  ports:
+  - name: image-tool
+    port: 80
+    protocol: TCP
+    targetPort: 5000
+  selector:
+    app: image-tool
+  type: LoadBalancer
+status:
+  loadBalancer: {}
+---
+apiVersion: route.openshift.io/v1
+kind: Route
+metadata:
+  labels:
+    app: image-tool
+  name: image-tool
+spec:
+  tls:
+    termination: edge
+  to:
+    kind: Service
+    name: image-tool
+    weight: null
